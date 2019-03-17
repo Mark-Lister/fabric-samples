@@ -44,6 +44,7 @@ async function main() {
       identity: userName,
       wallet: wallet,
       discovery: { enabled:false, asLocalhost: true }
+
     };
 
     // Connect to gateway using application specified parameters
@@ -61,17 +62,17 @@ async function main() {
 
     const contract = await network.getContract('papercontract', 'org.papernet.commercialpaper');
 
-    // redeem commercial paper
-    console.log('Submit commercial paper redeem transaction.');
+    // buy commercial paper
+    console.log('Submit commercial paper buy transaction.');
 
-    const redeemResponse = await contract.submitTransaction('redeem', 'MagnetoCorp', '00002', 'DigiBank', '2020-07-22');
+    const buyResponse = await contract.submitTransaction('buy', 'MagnetoCorp', '00002', 'MagnetoCorp', 'DigiBank', '585000', '2020-05-31');
 
     // process response
-    console.log('Process redeem transaction response.');
+    console.log('Process buy transaction response.');
 
-    let paper = CommercialPaper.fromBuffer(redeemResponse);
+    let paper = CommercialPaper.fromBuffer(buyResponse);
 
-    console.log(`${paper.issuer} commercial paper : ${paper.paperNumber} successfully redeemed with ${paper.owner}`);
+    console.log(`${paper.issuer} commercial paper : ${paper.paperNumber} successfully purchased by ${paper.owner}`);
     console.log('Transaction complete.');
 
   } catch (error) {
@@ -89,11 +90,11 @@ async function main() {
 }
 main().then(() => {
 
-  console.log('Redeem program complete.');
+  console.log('Buy program complete.');
 
 }).catch((e) => {
 
-  console.log('Redeem program exception.');
+  console.log('Buy program exception.');
   console.log(e);
   console.log(e.stack);
   process.exit(-1);

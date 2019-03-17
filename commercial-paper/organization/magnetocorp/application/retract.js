@@ -21,7 +21,8 @@ const { FileSystemWallet, Gateway } = require('fabric-network');
 const CommercialPaper = require('../contract/lib/paper.js');
 
 // A wallet stores a collection of identities for use
-const wallet = new FileSystemWallet('../identity/user/balaji/wallet');
+//const wallet = new FileSystemWallet('../user/isabella/wallet');
+const wallet = new FileSystemWallet('../identity/user/isabella/wallet');
 
 // Main program function
 async function main() {
@@ -34,7 +35,7 @@ async function main() {
 
     // Specify userName for network access
     // const userName = 'isabella.issuer@magnetocorp.com';
-    const userName = 'Admin@org1.example.com';
+    const userName = 'User1@org1.example.com';
 
     // Load connection profile; will be used to locate a gateway
     let connectionProfile = yaml.safeLoad(fs.readFileSync('../gateway/networkConnection.yaml', 'utf8'));
@@ -61,17 +62,17 @@ async function main() {
 
     const contract = await network.getContract('papercontract', 'org.papernet.commercialpaper');
 
-    // redeem commercial paper
-    console.log('Submit commercial paper redeem transaction.');
+    // retract commercial paper//
+    console.log('Submit commercial paper retract transaction.');
 
-    const redeemResponse = await contract.submitTransaction('redeem', 'MagnetoCorp', '00002', 'DigiBank', '2020-07-22');
+    const retractResponse = await contract.submitTransaction('retract', 'MagnetoCorp', '00001');
 
     // process response
-    console.log('Process redeem transaction response.');
+    console.log('Process retract transaction response.');
 
-    let paper = CommercialPaper.fromBuffer(redeemResponse);
+    let paper = CommercialPaper.fromBuffer(retractResponse);
 
-    console.log(`${paper.issuer} commercial paper : ${paper.paperNumber} successfully redeemed with ${paper.owner}`);
+    console.log(`${paper.issuer} commercial paper : ${paper.paperNumber} successfully retracted by ${paper.owner}`);
     console.log('Transaction complete.');
 
   } catch (error) {
@@ -89,11 +90,11 @@ async function main() {
 }
 main().then(() => {
 
-  console.log('Redeem program complete.');
+  console.log('Retract program complete.');
 
 }).catch((e) => {
 
-  console.log('Redeem program exception.');
+  console.log('Retract program exception.');
   console.log(e);
   console.log(e.stack);
   process.exit(-1);

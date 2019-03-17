@@ -11,7 +11,8 @@ const State = require('./../ledger-api/state.js');
 const cpState = {
     ISSUED: 1,
     TRADING: 2,
-    REDEEMED: 3
+    REDEEMED: 3,
+    RETRACTED: 4
 };
 
 /**
@@ -59,6 +60,10 @@ class CommercialPaper extends State {
         this.currentState = cpState.REDEEMED;
     }
 
+    setRetracted() {
+        this.currentState = cpState.RETRACTED;
+    }
+
     isIssued() {
         return this.currentState === cpState.ISSUED;
     }
@@ -69,6 +74,10 @@ class CommercialPaper extends State {
 
     isRedeemed() {
         return this.currentState === cpState.REDEEMED;
+    }
+
+    isRetracted() {
+        return this.currentState === cpState.RETRACTED;
     }
 
     static fromBuffer(buffer) {

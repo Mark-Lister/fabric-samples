@@ -102,6 +102,10 @@ class CommercialPaperContract extends Contract {
             throw new Error('Paper ' + issuer + paperNumber + ' is not owned by ' + currentOwner);
         }
 
+        if (paper.isRetracted()) {
+            throw new Error('Paper ' + issuer + paperNumber + ' was retracted sorry...');
+        }
+
         // First buy moves state from ISSUED to TRADING
         if (paper.isIssued()) {
             paper.setTrading();
@@ -111,7 +115,7 @@ class CommercialPaperContract extends Contract {
         if (paper.isTrading()) {
             paper.setOwner(newOwner);
         } else {
-            throw new Error('Paper ' + issuer + paperNumber + ' is not trading. Current state = ' +paper.getCurrentState());
+            throw new Error('Paper ' + issuer + paperNumber + ' is not trading. Current state = ' + paper.getCurrentState());
         }
 
         // Update the paper
@@ -150,6 +154,38 @@ class CommercialPaperContract extends Contract {
         await ctx.paperList.updatePaper(paper);
         return paper.toBuffer();
     }
+
+    /**
+     * Retract commercial paper
+     *
+     * @param {Context} ctx the transaction context
+     * @param {String} issuer commercial paper issuer
+     * @param {Integer} paperNumber paper number for this issuer
+    */
+    async retract(ctx, issuer, paperNumber) {
+
+        // Retrieve the current paper using key fields provided//
+        let paperKey = CommercialPaper.makeKey([issuer, paperNumber]);
+        let paper = await ctx.paperList.getPaper(paperKey);
+
+        // Validates the owner is the issuer
+        if (paper.getOwner() !== issuer) {
+            throw new Error('Paper ' + issuer + paperNumber + ' is not owned by ' + currentOwner);
+        }
+
+        // Checks the paper hasn't been redeemed or bought.
+        if (paper.isIssued()) {
+            paper.setRetracted();
+        }
+
+        
+
+
+        // Update the paper
+        await ctx.paperList.updatePaper(paper);
+        return paper.toBuffer();
+    }
+
 
 }
 
